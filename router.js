@@ -5,7 +5,7 @@ module.exports = (app) => {
     });
 
     // app.use('/upload', require('./routes/upload.js'));
-    // app.use('/posts', require('./routes/posts'));
+    app.use('/posts', require('./routes/posts'));
     // app.use('/homework', require('./routes/homework'));
     app.use('/users', require('./routes/users'));
     // app.use('/', require('./routes/index'));

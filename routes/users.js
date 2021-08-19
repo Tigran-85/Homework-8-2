@@ -6,6 +6,8 @@ const path = require('path');
 const User = require('../models/users')
 const userJsonPath = path.join(__homedir, './users.json');
 const {Types} = require('mongoose');
+const UsersCtrl = require('../controllers/users.ctrl');
+const {body, validationResult} = require('express-validator');
 
 router.route('/').get( async (req, res) => {
     // let users = Object.values(JSON.parse(await fs.readFile(userJsonPath), 'utf-8'));
@@ -23,27 +25,25 @@ router.route('/').get( async (req, res) => {
         data: users
     })
     
-}).post(upload.single('image'), async (req, res) => {
-    try{
-        // const users = JSON.parse(await fs.readFile(userJsonPath), 'utf-8');
-        if(await User.exists({username: req.body.username})){
-            throw new Error('User exists')
+}).post(
+    upload.single('image'), 
+    body('name').exists().bail().isLength({min: 6}),
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+          return res.status(400).json({ errors: errors.array() });
         }
-            const user = new User({
-                name: req.body.name,
-                image: req.file.path
-            });
-            user.username = req.body.username;
-
-            await user.save();
-           
-            // await fs.writeFile(userJsonPath, JSON.stringify(users));
-            res.json({
-                success: true,
-                data: user,
-                message: 'user created'
-            })
-        
+    try{
+        const userdata = await UsersCtrl.add({
+            name: req.body.name,
+            username: req.body.useranme,
+            file: req.file
+        });
+        res.json({
+            success: true,
+            data: userdata,
+            message: 'User created'
+        })
     } catch (e) {
         await fs.unlink(path.join(__homedir, req.file.path));
         res.json({
