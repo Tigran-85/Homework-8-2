@@ -9,4 +9,5 @@ module.exports = (app) => {
     // app.use('/homework', require('./routes/homework'));
     app.use('/users', require('./routes/users'));
     // app.use('/', require('./routes/index'));
+    app.use('/auth', require('./routes/auth'));
 };

@@ -2,7 +2,7 @@ const AppError = require("../managers/app.error");
 const TokenManager = require("../managers/token-manager");
 
 module.exports = async (req, res, next) => {
-    const token = req.headers['token'] || req.query.token || req.query.body;
+    const token = req.headers['token'] || req.query.token || req.body.token;
     if(token) {
         try {
             const decoded = await TokenManager.decode(token);

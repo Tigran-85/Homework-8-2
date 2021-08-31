@@ -12,5 +12,5 @@ module.exports = (req, res, next) => {
         ResponseManager.respondWithError(res, error.httpStatus || 500, error.message || 'Unknown error', data);
     }
 
-    next()
-}
+    next();
+};

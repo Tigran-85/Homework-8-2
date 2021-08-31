@@ -6,7 +6,6 @@ const {body, check} = require('express-validator');
 const {ObjectId} = require('mongoose').Types;
 const ResponseManager = require('../managers/response-manager');
 const AppError = require('../managers/app.error');
-const { response } = require('express');
 const validationResult = require('../middlewares/validation-result');
 const responseHandler = require('../middlewares/response-handler');
 const validateToken = require('../middlewares/validate-token');

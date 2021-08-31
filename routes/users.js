@@ -10,6 +10,8 @@ const UsersCtrl = require('../controllers/users.ctrl');
 const {body} = require('express-validator');
 const responseManager = require('../middlewares/response-handler');
 const validationResult = require('../middlewares/validation-result');
+const responseHandler = require('../middlewares/response-handler');
+const validateToken = require('../middlewares/validate-token');
 
 router.route('/').get( async (req, res) => {
     // let users = Object.values(JSON.parse(await fs.readFile(userJsonPath), 'utf-8'));
@@ -65,6 +67,21 @@ router.post('/login',
                 ...req.body
             });
             res.onSuccess(token);
+        } catch (e) {
+            res.onError(e);
+        }
+        
+    }
+);
+
+router.post('/current',
+    responseManager,
+    validateToken,
+    
+    async (req, res) => {
+        try {
+            const user = await UsersCtrl.getById(req.decoded.userId);
+            res.onSuccess(user);
         } catch (e) {
             res.onError(e);
         }
