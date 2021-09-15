@@ -1,6 +1,7 @@
 const http = require('http');
 const express = require('express');
 const router = require('./router');
+const io = require('./socket');
 const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -18,8 +19,10 @@ mongoose.connect('mongodb://localhost/nodjs', {
   useFindAndModify: false,
   useCreateIndex: true
 }).then(() => {
-    app.listen(2021);
-})
+    const server = http.createServer(app);
+    server.listen(2021);
+    io(server);
+});
 
 
 

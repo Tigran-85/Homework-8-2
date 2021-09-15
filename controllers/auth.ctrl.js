@@ -28,11 +28,11 @@ class AuthCtrl {
 
      async register(data){
         const user = await UsersCtrl.add(data);
-        const token = TokenManager.encode({
-            email: user.email,
-            action: 'register'
-        }, 3600);
-        await mail(user.email, 'Node js register', `<a href="http://127.0.0.1:5500/activate.html?activation-code=${token}">Activate Profile</a>`);
+        // const token = TokenManager.encode({
+        //     email: user.email,
+        //     action: 'register'
+        // }, 3600);
+        // await mail(user.email, 'Node js register', `<a href="http://127.0.0.1:5500/activate.html?activation-code=${token}">Activate Profile</a>`);
         return user;
      }
 

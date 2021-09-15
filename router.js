@@ -4,10 +4,13 @@ module.exports = (app) => {
         next();
     });
 
-    // app.use('/upload', require('./routes/upload.js'));
-    app.use('/posts', require('./routes/posts'));
-    // app.use('/homework', require('./routes/homework'));
-    app.use('/users', require('./routes/users'));
-    // app.use('/', require('./routes/index'));
     app.use('/auth', require('./routes/auth'));
+    // app.use('/upload', require('./routes/upload.js'));
+    app.use('/users', require('./routes/users'));
+    app.use('/posts', require('./routes/posts'));
+    
+    // app.use('/homework', require('./routes/homework'));
+    
+    // app.use('/', require('./routes/index'));
+    
 };

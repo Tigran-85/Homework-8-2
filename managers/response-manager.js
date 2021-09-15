@@ -31,7 +31,7 @@ class ResponseManager {
         let response = Object.assign({}, ResponseBase)
         response.success = false;
         response.message = message;
-        response.errors = data;
+        response.data = data;
         res.status(errorCode).json(response);
     }
 }

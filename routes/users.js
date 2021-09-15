@@ -13,21 +13,19 @@ const validationResult = require('../middlewares/validation-result');
 const responseHandler = require('../middlewares/response-handler');
 const validateToken = require('../middlewares/validate-token');
 
-router.route('/').get( async (req, res) => {
-    // let users = Object.values(JSON.parse(await fs.readFile(userJsonPath), 'utf-8'));
-    const options = {};
-    const limit = {};
-    if(req.query.name){
-       options.name = req.query.name;
+router.route('/').get(
+    responseManager,
+    validateToken,
+    async (req, res) => {
+    try {
+        const users = await UsersCtrl.getAll({
+            name: req.query.name,
+            userId: req.decoded.userId
+        });
+        res.onSuccess(users)
+    } catch (e) {
+        res.onError(e)
     }
-    if(req.query.limit){
-        limit.limit = Number(req.query.limit);
-    }
-    const users = await User.find(options, null, limit);
-    res.json({
-        success: true,
-        data: users
-    })
     
 }).post(
     upload.single('image'), 
@@ -88,6 +86,83 @@ router.post('/current',
         
     }
 );
+
+router.route('/friends').get(
+    responseManager,
+    validateToken,
+    async (req, res) => {
+        try {
+            const friends = await UsersCtrl.getFriends({
+                userId: req.decoded.userId
+            })
+           res.onSuccess(friends);
+        } catch (e) {
+            res.onError(e)
+        }
+    }
+)
+
+router.route('/friend-request').post(
+    responseManager,
+    body('to').exists(),
+    validateToken,
+    async (req, res) => {
+        try {
+            await UsersCtrl.friendRequest({
+                from: req.decoded.userId,
+                to: req.body.to
+            });
+            res.onSuccess();
+        } catch (e) {
+            res.onError(e)
+        }
+    }
+).get(
+    responseManager,
+    validateToken,
+    async (req, res) => {
+        try {
+            
+           res.onSuccess(
+            await UsersCtrl.getFriendRequests({
+                userId: req.decoded.userId
+            })
+           );
+        } catch (e) {
+            res.onError(e)
+        }
+    }
+).put(
+    responseManager,
+    body('to').exists(),
+    validateToken,
+    async (req, res) => {
+        try {
+            await UsersCtrl.acceptFriendRequests({
+                userId: req.decoded.userId,
+                to: req.body.to
+            });
+            res.onSuccess();
+        } catch (e) {
+            res.onError(e)
+        }
+    }
+).delete(
+    responseManager,
+    body('to').exists(),
+    validateToken,
+    async (req, res) => {
+        try {
+            await UsersCtrl.declineFriendRequests({
+                userId: req.decoded.userId,
+                to: req.body.to
+            });
+            res.onSuccess();
+        } catch (e) {
+            res.onError(e)
+        }
+    }
+)
 
 router.route('/:id').get(async (req, res) => {
     // Types.ObjectId.isValid(req.params.id);
@@ -157,5 +232,8 @@ router.route('/:id').get(async (req, res) => {
     }
     
 })
+
+
+
 
 module.exports = router;

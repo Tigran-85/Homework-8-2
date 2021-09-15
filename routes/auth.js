@@ -75,7 +75,6 @@ router.post('/reset-password',
 
 router.post('/register',
     upload.single('image'),
-    body('email').isEmail(),
     body('name').exists().bail().isLength({min: 6}),
     body('password').exists().bail().isLength({min: 6}).custom(value => {
         return new RegExp("^[A-Z0-9.,/ $@()]+$").test(value);
