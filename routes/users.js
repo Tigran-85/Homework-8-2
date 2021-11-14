@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../middlewares/upload')
-const fs = require('fs').promises;
+const fs = require('fs');
 const path = require('path');
 const User = require('../models/users')
 const userJsonPath = path.join(__homedir, './users.json');
@@ -72,7 +72,7 @@ router.post('/login',
     }
 );
 
-router.post('/current',
+router.route('/current').get(
     responseManager,
     validateToken,
     
@@ -85,7 +85,29 @@ router.post('/current',
         }
         
     }
-);
+).put(
+    upload.single('image'),
+    responseManager,
+    validateToken,
+    body('name').exists(),
+    body('email').isEmail(),
+    async (req, res) => {
+        try {
+            const updatedData = await UsersCtrl.update({
+                name: req.body.name,
+                email: req.body.email,
+                image: req.file ? req.file.filename : undefined,
+                userId: req.decoded.userId
+            });
+            res.onSuccess(updatedData);
+        } catch (e) {
+            if (req.file && req.file.path) {
+                await fs.promises.unlink(path.join(__homedir, req.file.path));
+            }
+            res.onError(e);
+        }
+       
+})
 
 router.route('/friends').get(
     responseManager,

@@ -3,6 +3,8 @@ const User = require('../models/users');
 const AppError = require('../managers/app.error');
 const TokenManager = require('../managers/token-manager');
 const FriendRequest = require('../models/friend-request');
+const fs = require('fs');
+const path = require('path');
 
 class UsersCtrl {
     getById (id) {
@@ -46,8 +48,24 @@ class UsersCtrl {
         
     }
 
-    update () {
-        
+    async update (data) {
+        const {userId, name, image, email} = data;
+        const user = await User.findById(userId);
+
+        if(!user){
+            throw new AppError('User not exists', 404);
+        }
+        if (image) {
+            if (user.image) {
+                await fs.promises.unlink(path.join(__homedir, 'uploads', user.image));
+            }
+            
+            user.image = image;
+        }
+
+        user.email = email;
+        user.name = name;
+        return user.save();
     }
 
     delete () {

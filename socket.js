@@ -20,7 +20,6 @@ module.exports = (server) => {
             try {
                 const decoded = await TokenManager.decode(client.handshake.auth.token);
                 if (decoded.userId) {
-                    console.log(client.handshake.auth.token);
                     client.userId = decoded.userId;
                     next();
                 }else {
